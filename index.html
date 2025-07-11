@@ -4,16 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ideas List - Suitmedia</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
       header {
         transition: top 0.3s, background-color 0.3s;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(240, 108, 26, 0.9);
+      }
+      header .nav-link {
+        color: aliceblue;
+        font-size: 13px;
       }
       .banner {
         position: relative;
         height: 300px;
-        background-image: url('https://placehold.co/300x200?text=No+Image');
+        background-image: url("https://placehold.co/300x200?text=No+Image");
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
@@ -26,7 +33,7 @@
         transform: translateX(-50%);
         color: white;
         text-align: center;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
       }
       .card-title {
         display: -webkit-box;
@@ -35,6 +42,19 @@
         overflow: hidden;
         text-overflow: ellipsis;
         height: 4.5em;
+      }
+      .page-item.active .page-link {
+        background-color: #f06c1a; /* warna orange */
+        border-color: #f06c1a;
+        color: white;
+      }
+
+      .page-link {
+        color: black;
+      }
+
+      .page-link:hover {
+        color: #d75c0e;
       }
     </style>
   </head>
@@ -47,7 +67,9 @@
             <li class="nav-item"><a class="nav-link" href="#">Work</a></li>
             <li class="nav-item"><a class="nav-link" href="#">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
-            <li class="nav-item"><a class="nav-link active fw-bold" href="#">Ideas</a></li>
+            <li class="nav-item">
+              <a class="nav-link active fw-bold" href="#">Ideas</a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="#">Careers</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
           </ul>
@@ -86,40 +108,44 @@
     </div>
 
     <script>
-      const API_URL = 'https://suitmedia-backend.suitdev.com/api/ideas';
-      const header = document.getElementById('mainHeader');
-      const banner = document.getElementById('banner');
-      let currentPage = 1, currentSize = 10, currentSort = '-published_at';
+      const API_URL = "https://suitmedia-backend.suitdev.com/api/ideas";
+      const header = document.getElementById("mainHeader");
+      const banner = document.getElementById("banner");
+      let currentPage = 1,
+        currentSize = 10,
+        currentSort = "-published_at";
       let lastScrollTop = 0;
 
-      window.addEventListener('scroll', () => {
+      window.addEventListener("scroll", () => {
         const scrollTop = window.scrollY;
-        header.style.top = scrollTop > lastScrollTop ? '-80px' : '0';
+        header.style.top = scrollTop > lastScrollTop ? "-80px" : "0";
         banner.style.backgroundPositionY = `${scrollTop * 0.5}px`;
         lastScrollTop = scrollTop;
       });
 
       function loadFromParams() {
         const params = new URLSearchParams(window.location.search);
-        currentPage = parseInt(params.get('page')) || 1;
-        currentSize = parseInt(params.get('size')) || 10;
-        currentSort = params.get('sort') || '-published_at';
-        document.getElementById('showPerPage').value = currentSize;
-        document.getElementById('sortSelect').value = currentSort;
+        currentPage = parseInt(params.get("page")) || 1;
+        currentSize = parseInt(params.get("size")) || 10;
+        currentSort = params.get("sort") || "-published_at";
+        document.getElementById("showPerPage").value = currentSize;
+        document.getElementById("sortSelect").value = currentSort;
       }
 
       function updateURLParams() {
         const params = new URLSearchParams();
-        params.set('page', currentPage);
-        params.set('size', currentSize);
-        params.set('sort', currentSort);
-        history.replaceState(null, '', '?' + params.toString());
+        params.set("page", currentPage);
+        params.set("size", currentSize);
+        params.set("sort", currentSort);
+        history.replaceState(null, "", "?" + params.toString());
       }
 
       async function fetchPosts() {
         updateURLParams();
         const url = `${API_URL}?page[number]=${currentPage}&page[size]=${currentSize}&append[]=small_image&append[]=medium_image&sort=${currentSort}`;
-        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        const res = await fetch(url, {
+          headers: { Accept: "application/json" },
+        });
         const json = await res.json();
         renderPosts(json.data);
         renderPagination(json.meta);
@@ -127,14 +153,18 @@
       }
 
       function renderPosts(posts) {
-        const container = document.getElementById('postsContainer');
-        container.innerHTML = '';
-        posts.forEach(post => {
-          const rawImage = post.small_image?.[0]?.url || post.medium_image?.[0]?.url;
-          const image = rawImage || 'https://placehold.co/300x200?text=No+Image';
+        const container = document.getElementById("postsContainer");
+        container.innerHTML = "";
+        posts.forEach((post) => {
+          const rawImage =
+            post.small_image?.[0]?.url || post.medium_image?.[0]?.url;
+          const image =
+            rawImage || "https://placehold.co/300x200?text=No+Image";
           const title = post.title;
-          const date = new Date(post.published_at).toLocaleDateString('id-ID', {
-            day: 'numeric', month: 'long', year: 'numeric'
+          const date = new Date(post.published_at).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
           });
 
           container.innerHTML += `
@@ -152,21 +182,56 @@
       }
 
       function renderPagination(meta) {
-        const pagination = document.getElementById('pagination');
-        pagination.innerHTML = '';
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
         const totalPages = meta.last_page;
-        for (let i = 1; i <= totalPages; i++) {
+        const maxVisible = 5;
+
+        let startPage = Math.max(currentPage - Math.floor(maxVisible / 2), 1);
+        let endPage = startPage + maxVisible - 1;
+
+        if (endPage > totalPages) {
+          endPage = totalPages;
+          startPage = Math.max(endPage - maxVisible + 1, 1);
+        }
+
+        // Tombol Previous
+        if (currentPage > 1) {
           pagination.innerHTML += `
-            <li class="page-item ${i === currentPage ? 'active' : ''}">
-              <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
-            </li>`;
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="goToPage(${
+              currentPage - 1
+            })">&laquo;</a>
+          </li>
+        `;
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          pagination.innerHTML += `
+          <li class="page-item ${i === currentPage ? "active" : ""}">
+            <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+          </li>
+        `;
+        }
+
+        // Tombol Next
+        if (currentPage < totalPages) {
+          pagination.innerHTML += `
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="goToPage(${
+              currentPage + 1
+            })">&raquo;</a>
+          </li>
+        `;
         }
       }
 
       function updateShowingText(meta) {
         const start = (meta.current_page - 1) * currentSize + 1;
         const end = Math.min(meta.current_page * currentSize, meta.total);
-        document.getElementById('showing').innerText = `Showing ${start} - ${end} of ${meta.total}`;
+        document.getElementById(
+          "showing"
+        ).innerText = `Showing ${start} - ${end} of ${meta.total}`;
       }
 
       function goToPage(page) {
@@ -174,13 +239,13 @@
         fetchPosts();
       }
 
-      document.getElementById('sortSelect').addEventListener('change', (e) => {
+      document.getElementById("sortSelect").addEventListener("change", (e) => {
         currentSort = e.target.value;
         currentPage = 1;
         fetchPosts();
       });
 
-      document.getElementById('showPerPage').addEventListener('change', (e) => {
+      document.getElementById("showPerPage").addEventListener("change", (e) => {
         currentSize = parseInt(e.target.value);
         currentPage = 1;
         fetchPosts();
